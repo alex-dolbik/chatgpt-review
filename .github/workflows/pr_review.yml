@@ -12,6 +12,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: install deps
+        run: npm i
+
       - name: Run PR handler
         run: node prHandler.js
         env:
