@@ -18,7 +18,7 @@ jobs:
           node-version: '18.x'
 
       - name: Install deps
-        run: npm ci
+        run: npm install
 
       - name: Run PR handler
         run: node prHandler.js
