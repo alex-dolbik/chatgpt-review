@@ -1,4 +1,3 @@
-const { Octokit } = require("@octokit/rest");
 const core = require('@actions/core');
 const github = require('@actions/github');
 
@@ -121,9 +120,45 @@ const main = async () => {
       `
     });
 
+    await addChatGPTComments();
   } catch (error) {
     core.setFailed(error.message);
   }
+}
+
+async function addChatGPTComments() {
+  const feedback = `
+  1: Consider using more descriptive names for the function and its parameters.
+  3-4: Avoid duplicate conditional checks. Combine them into a single condition with appropriate branching logic.
+  6-10: Utilize template literals for console.log statements to improve readability and simplify the code.
+`;
+
+  await addCommentToFileLine({
+    line: 1,
+    file: 'index.js',
+    comment: 'Consider using more descriptive names for the function and its parameters.',
+  });
+}
+
+async function addCommentToFileLine({ line, file, comment }) {
+  const { owner, repo, pr_number, token } = process.env;
+
+  const octokit = new github.getOctokit(token);
+  const { data: pullRequest } = await octokit.pulls.get({
+    owner,
+    repo,
+    pull_number: pr_number
+  });
+
+  await octokit.pulls.createComment({
+    owner,
+    repo,
+    pull_number: pr_number,
+    body: comment,
+    commit_id: pullRequest.head.sha,
+    path: file,
+    position: line,
+  });
 }
 
 // Call the main function to run the action
