@@ -1,6 +1,7 @@
 const { Octokit } = require("@octokit/rest");
 
 async function handlePullRequest(eventPayload) {
+  test
   console.log('Start "handlePullRequest"');
 
   // Extract relevant information from the event payload
