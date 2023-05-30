@@ -132,8 +132,14 @@ async function addChatGPTComments() {
   3-4: Avoid duplicate conditional checks. Combine them into a single condition with appropriate branching logic.
   6-10: Utilize template literals for console.log statements to improve readability and simplify the code.
 `;
+  //
+  // await addCommentToFileLine({
+  //   line: 1,
+  //   file: 'index.js',
+  //   comment: 'Consider using more descriptive names for the function and its parameters.',
+  // });
 
-  await addCommentToFileLine({
+  await addCommentToLine({
     line: 1,
     file: 'index.js',
     comment: 'Consider using more descriptive names for the function and its parameters.',
@@ -160,6 +166,45 @@ async function addCommentToFileLine({ line, file, comment }) {
     position: line,
   });
 }
+
+async function addCommentToLine({ comment, file, line }) {
+  const { owner, repo, pr_number: pullRequestNumber, token } = process.env;
+
+  const octokit = github.getOctokit(token);
+
+  try {
+    const { data: pullRequest } = await octokit.rest.pulls.get({
+      owner,
+      repo,
+      pull_number: pullRequestNumber
+    });
+
+    const { data: comments } = await octokit.rest.issues.listComments({
+      owner,
+      repo,
+      issue_number: pullRequestNumber
+    });
+
+    const fileComments = comments.filter(comment => comment.path === file);
+    const position = fileComments.length > 0 ? fileComments[fileComments.length - 1].position + 1 : 1;
+
+    await octokit.rest.pulls.createReviewComment({
+      owner,
+      repo,
+      pull_number: pullRequestNumber,
+      body: comment,
+      commit_id: pullRequest.head.sha,
+      path: file,
+      position,
+      line
+    });
+
+    console.log('Comment added successfully!');
+  } catch (error) {
+    console.error('Error adding comment:', error);
+  }
+}
+
 
 // Call the main function to run the action
 main();
