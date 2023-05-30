@@ -128,46 +128,29 @@ const main = async () => {
 
 async function addChatGPTComments() {
   const feedback = `
-  1: Consider using more descriptive names for the function and its parameters.
-  3-4: Avoid duplicate conditional checks. Combine them into a single condition with appropriate branching logic.
-  6-10: Utilize template literals for console.log statements to improve readability and simplify the code.
+  1::: Consider using more descriptive names for the function and its parameters.
+  3-4::: Avoid duplicate conditional checks. Combine them into a single condition with appropriate branching logic.
+  6-10::: Utilize template literals for console.log statements to improve readability and simplify the code.
 `;
-  //
-  // await addCommentToFileLine({
-  //   line: 1,
-  //   file: 'index.js',
-  //   comment: 'Consider using more descriptive names for the function and its parameters.',
-  // });
 
-  await addCommentToLine({
-    line: 1,
-    file: 'index.js',
-    comment: 'Consider using more descriptive names for the function and its parameters.',
-  });
+  const comments = feedback.split('\n').map(item => {
+    const [lines, text] = item.split(':::');
+    const [line] = lines.split('-');
+    const comment = text.trim();
+
+    return { comment, line };
+  })
+
+  await Promise.all(comments.map(({ line, comment }) => (
+    addCommentToFileLine({
+      line,
+      file: 'index.js',
+      comment,
+    })
+  )));
 }
 
-async function addCommentToFileLine({ line, file, comment }) {
-  const { owner, repo, pr_number, token } = process.env;
-
-  const octokit = new github.getOctokit(token);
-  const { data: pullRequest } = await octokit.pulls.get({
-    owner,
-    repo,
-    pull_number: pr_number
-  });
-
-  await octokit.pulls.createComment({
-    owner,
-    repo,
-    pull_number: pr_number,
-    body: comment,
-    commit_id: pullRequest.head.sha,
-    path: file,
-    position: line,
-  });
-}
-
-async function addCommentToLine({ comment, file, line }) {
+async function addCommentToFileLine({ comment, file, line }) {
   const { owner, repo, pr_number: pullRequestNumber, token } = process.env;
 
   const octokit = github.getOctokit(token);
