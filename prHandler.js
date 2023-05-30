@@ -148,13 +148,23 @@ async function addChatGPTComments() {
     })
     .filter(Boolean)
 
-  // await Promise.all(comments.map(({ line, comment }) => (
+
+  for (let i = 0; i < comments.length; i++) {
+    const { line, comment } = comments[i];
     await addCommentToFileLine({
-      line: comments[1].line,
+      line,
       file: 'index.js',
-      comment: comments[0].comment,
+      comment,
     })
-  // )));
+  }
+  //
+  // await Promise.all(comments.map(async ({ line, comment }) => {
+  //   return await addCommentToFileLine({
+  //     line,
+  //     file: 'index.js',
+  //     comment,
+  //   })
+  // }));
 }
 
 async function addCommentToFileLine({ comment, file, line }) {
