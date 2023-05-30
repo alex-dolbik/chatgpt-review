@@ -133,13 +133,20 @@ async function addChatGPTComments() {
   6-10::: Utilize template literals for console.log statements to improve readability and simplify the code.
 `;
 
-  const comments = feedback.split('\n').map(item => {
-    const [lines, text] = item.split(':::');
-    const [line] = lines.split('-');
-    const comment = text.trim();
+  const comments = feedback.split('\n')
+    .filter(Boolean)
+    .map(item => {
+      const [lines, text] = item.split(':::');
+      if (!lines || !text) {
+        console.log('Ignored feedback line', item);
+        return null;
+      }
+      const [line] = lines.split('-');
+      const comment = text.trim();
 
-    return { comment, line };
-  })
+      return { comment, line };
+    })
+    .filter(Boolean)
 
   await Promise.all(comments.map(({ line, comment }) => (
     addCommentToFileLine({
