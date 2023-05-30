@@ -24,3 +24,9 @@ jobs:
         run: node prHandler.js
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+        uses: link-/PR-metadata-action@main
+        with:
+          owner: ${{ github.repository_owner }}
+          repo: ${{ github.event.repository.name }}
+          pr_number: ${{ github.event.number }}
+          token: ${{ secrets.GITHUB_TOKEN }}
