@@ -33,4 +33,10 @@ async function handlePullRequest(eventPayload) {
   });
 }
 
+function a() {
+  console.log(process);
+}
+
+a();
+
 module.exports = handlePullRequest;
