@@ -141,10 +141,10 @@ async function addChatGPTComments() {
         console.log('Ignored feedback line', item);
         return null;
       }
-      const [line] = lines.split('-');
+      const [line] = lines?.trim().split('-');
       const comment = text.trim();
 
-      return { comment, line };
+      return { comment, line: +line };
     })
     .filter(Boolean)
 
