@@ -11,10 +11,10 @@ const main = async () => {
      * We need to fetch all the inputs that were provided to our action
      * and store them in variables for us to use.
      **/
-      // const owner = core.getInput('owner', { required: true });
-      // const repo = core.getInput('repo', { required: true });
-      // const pr_number = core.getInput('pr_number', { required: true });
-      // const token = core.getInput('token', { required: true });
+    // const owner = core.getInput('owner', { required: true });
+    // const repo = core.getInput('repo', { required: true });
+    // const pr_number = core.getInput('pr_number', { required: true });
+    // const token = core.getInput('token', { required: true });
     const { owner, repo, pr_number, token } = process.env;
 
     /**
@@ -162,6 +162,15 @@ async function addChatGPTComments() {
 async function addCommentToFileLine({ comment, file, line }) {
   console.log('addCommentToFileLine');
 
+  //
+  // await Promise.all(comments.map(async ({ line, comment }) => {
+  //   return await addCommentToFileLine({
+  //     line,
+  //     file: 'index.js',
+  //     comment,
+  //   })
+  // }));
+  
   const { owner, repo, pr_number: pullRequestNumber, token } = process.env;
 
   const octokit = github.getOctokit(token);
