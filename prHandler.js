@@ -160,8 +160,6 @@ async function addChatGPTComments() {
 }
 
 async function addCommentToFileLine({ comment, file, line }) {
-  console.log('addCommentToFileLine');
-
   //
   // await Promise.all(comments.map(async ({ line, comment }) => {
   //   return await addCommentToFileLine({
