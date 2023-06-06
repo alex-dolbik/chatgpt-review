@@ -148,7 +148,7 @@ async function addChatGPTComments() {
     })
     .filter(Boolean)
 
-
+  // comments should be added one-by-one
   for (let i = 0; i < comments.length; i++) {
     const { line, comment } = comments[i];
     await addCommentToFileLine({
@@ -157,6 +157,11 @@ async function addChatGPTComments() {
       comment,
     })
   }
+}
+
+async function addCommentToFileLine({ comment, file, line }) {
+  console.log('addCommentToFileLine');
+
   //
   // await Promise.all(comments.map(async ({ line, comment }) => {
   //   return await addCommentToFileLine({
@@ -165,9 +170,7 @@ async function addChatGPTComments() {
   //     comment,
   //   })
   // }));
-}
-
-async function addCommentToFileLine({ comment, file, line }) {
+  
   const { owner, repo, pr_number: pullRequestNumber, token } = process.env;
 
   const octokit = github.getOctokit(token);
