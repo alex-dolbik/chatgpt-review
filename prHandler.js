@@ -41,7 +41,7 @@ const main = async () => {
     });
 
 
-    // console.log({ changedFiles })
+    console.log({ changedFiles })
 
 
     /**
