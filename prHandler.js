@@ -1,4 +1,3 @@
-const { Octokit } = require("@octokit/rest");
 const core = require('@actions/core');
 const github = require('@actions/github');
 
@@ -42,7 +41,7 @@ const main = async () => {
     });
 
 
-    console.log({ changedFiles })
+    // console.log({ changedFiles })
 
 
     /**
@@ -109,22 +108,103 @@ const main = async () => {
      * Create a comment on the PR with the information we compiled from the
      * list of changed files.
      */
-    await octokit.rest.issues.createComment({
-      owner,
-      repo,
-      issue_number: pr_number,
-      body: `
-        Pull Request #${pr_number} has been updated with: \n
-        - ${diffData.changes} changes \n
-        - ${diffData.additions} additions \n
-        - ${diffData.deletions} deletions \n
-      `
-    });
+    // await octokit.rest.issues.createComment({
+    //   owner,
+    //   repo,
+    //   issue_number: pr_number,
+    //   body: `
+    //     Pull Request #${pr_number} has been updated with: \n
+    //     - ${diffData.changes} changes \n
+    //     - ${diffData.additions} additions \n
+    //     - ${diffData.deletions} deletions \n
+    //   `
+    // });
 
+    await addChatGPTComments();
   } catch (error) {
     core.setFailed(error.message);
   }
 }
+
+async function addChatGPTComments() {
+  const feedback = `
+  1::: Consider using more descriptive names for the function and its parameters.
+  3-4::: Avoid duplicate conditional checks. Combine them into a single condition with appropriate branching logic.
+  6-10::: Utilize template literals for console.log statements to improve readability and simplify the code.
+`;
+
+  const comments = feedback.split('\n')
+    .filter(Boolean)
+    .map(item => {
+      const [lines, text] = item.split(':::');
+      if (!lines || !text) {
+        console.log('Ignored feedback line', item);
+        return null;
+      }
+      const [line] = lines?.trim().split('-');
+      const comment = text.trim();
+
+      return { comment, line: +line };
+    })
+    .filter(Boolean)
+
+
+  for (let i = 0; i < comments.length; i++) {
+    const { line, comment } = comments[i];
+    await addCommentToFileLine({
+      line,
+      file: 'index.js',
+      comment,
+    })
+  }
+  //
+  // await Promise.all(comments.map(async ({ line, comment }) => {
+  //   return await addCommentToFileLine({
+  //     line,
+  //     file: 'index.js',
+  //     comment,
+  //   })
+  // }));
+}
+
+async function addCommentToFileLine({ comment, file, line }) {
+  const { owner, repo, pr_number: pullRequestNumber, token } = process.env;
+
+  const octokit = github.getOctokit(token);
+
+  try {
+    const { data: pullRequest } = await octokit.rest.pulls.get({
+      owner,
+      repo,
+      pull_number: pullRequestNumber
+    });
+
+    const { data: comments } = await octokit.rest.issues.listComments({
+      owner,
+      repo,
+      issue_number: pullRequestNumber
+    });
+
+    const fileComments = comments.filter(comment => comment.path === file);
+    const position = fileComments.length > 0 ? fileComments[fileComments.length - 1].position + 1 : 1;
+
+    await octokit.rest.pulls.createReviewComment({
+      owner,
+      repo,
+      pull_number: pullRequestNumber,
+      body: comment,
+      commit_id: pullRequest.head.sha,
+      path: file,
+      position,
+      line
+    });
+
+    console.log('Comment added successfully!');
+  } catch (error) {
+    console.error('Error adding comment:', error);
+  }
+}
+
 
 // Call the main function to run the action
 main();
