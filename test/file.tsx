@@ -1,12 +1,12 @@
 /** @jsxRuntime classic */
 /** @jsx jsx */
 
-import { jsx } from '@emotion/react';
-import { useFilterContext } from '@xsite-ui/fintech.context-providers/filter-context';
+import {jsx} from '@emotion/react';
+import {useFilterContext} from '@xsite-ui/fintech.context-providers/filter-context';
 import React from 'react';
 
-import { Step } from '../step/step';
-import { filtersContent, filtersStyle, titleStyle } from './styles';
+import {Step} from '../step/step';
+import {filtersContent, filtersStyle, titleStyle} from './styles';
 
 interface FiltersContentProps {
   onInputChange?: () => void;
@@ -16,13 +16,13 @@ interface FiltersContentProps {
 }
 
 function FiltersContent(props: FiltersContentProps) {
-  const { onInputChange, isOpen = false, isSticky = false, maxWidth = 840 } = props;
+  const {onInputChange, isOpen = false, isSticky = false, maxWidth = 840} = props;
 
-  const { filters = [] } = useFilterContext();
+  const {filters = []} = useFilterContext();
 
   const firstFilterData = filters[0]?.[0]?.data || {};
 
-  const { title } = firstFilterData;
+  const {title} = firstFilterData;
 
   return (
     <div css={filtersContent(isOpen, isSticky, maxWidth)}>
@@ -45,4 +45,4 @@ function FiltersContent(props: FiltersContentProps) {
   );
 }
 
-export { FiltersContent };
+export {FiltersContent};
