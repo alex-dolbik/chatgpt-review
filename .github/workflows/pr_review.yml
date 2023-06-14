@@ -22,13 +22,11 @@ jobs:
     permissions: write-all
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-#      - uses: fluxninja/openai-pr-reviewer@latest
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN_NEW }}
-#          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-#        with:
-#          debug: true
-#          review_simple_changes: false
-#          review_comment_lgtm: false
+      - uses: fluxninja/openai-pr-reviewer@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN3 }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        with:
+          debug: true
+          review_simple_changes: false
+          review_comment_lgtm: false
