@@ -1,36 +1,31 @@
-name: PR Review
+name: Code Review
+
+permissions:
+  contents: read
+  pull-requests: write
 
 on:
-  pull_request:
-    types: [opened, synchronize]
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+  pull_request_review_comment:
+    types: [created]
+
+concurrency:
+  group:
+    ${{ github.repository }}-${{ github.event.number || github.head_ref ||
+    github.sha }}-${{ github.workflow }}-${{ github.event_name ==
+    'pull_request_review_comment' && 'pr_comment' || 'pr' }}
+  cancel-in-progress: ${{ github.event_name != 'pull_request_review_comment' }}
 
 jobs:
-  pr_review:
+  review:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Use Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18.x'
-
-      - name: Install deps
-        run: npm install
-
-      - name: Run PR handler
-        run: node prHandler.js
+      - uses: fluxninja/openai-pr-reviewer@latest
         env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN2 }}
-          owner: ${{ github.repository_owner }}
-          repo: ${{ github.event.repository.name }}
-          pr_number: ${{ github.event.number }}
-          token: ${{ secrets.MY_GITHUB_TOKEN2 }}
-#        uses: link-/PR-metadata-action@main
-#        with:
-#          owner: ${{ github.repository_owner }}
-#          repo: ${{ github.event.repository.name }}
-#          pr_number: ${{ github.event.number }}
-#          token: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        with:
+          debug: true
+          review_simple_changes: false
+          review_comment_lgtm: false
