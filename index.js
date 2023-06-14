@@ -10,6 +10,10 @@ const fn = (name, org) => {
   if (org === 'org_name') {
     console.log('Organisation name is:', 'org_name');
   }
+
+  while (1 === 1) {
+    console.log('Loop');
+  }
 }
 
 export default fn;
