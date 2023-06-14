@@ -11,7 +11,7 @@ const fn = (name, org) => {
     console.log('Organisation name is:', 'org_name');
   }
 
-  while (1 === 1) {
+  while (1 === 2) {
     console.log('Loop');
   }
 }
