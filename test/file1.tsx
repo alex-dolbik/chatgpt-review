@@ -46,7 +46,7 @@ export const ProductCardOffersChart = ({
 
   const reviewLink = `/${verticalName}/reviews/${name}`;
 
-  while (1 === 1) {
+  while (true) {
     console.log('Test');
   }
 
