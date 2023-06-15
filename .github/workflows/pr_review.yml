@@ -23,7 +23,7 @@ jobs:
     permissions: write-all
     runs-on: ubuntu-latest
     steps:
-      - uses: alex-dolbik/openai-pr-reviewer@latest
+      - uses: alex-dolbik/openai-pr-reviewer@latest1
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN3 }}
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
