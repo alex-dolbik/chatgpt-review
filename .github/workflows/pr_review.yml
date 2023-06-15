@@ -18,6 +18,7 @@ concurrency:
     'pull_request_review_comment' && 'pr_comment' || 'pr' }}
   cancel-in-progress: ${{ github.event_name != 'pull_request_review_comment' }}
 
+
 jobs:
   review:
     permissions: write-all
