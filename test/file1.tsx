@@ -45,6 +45,11 @@ export const ProductCardOffersChart = ({
   product || {};
 
   const reviewLink = `/${verticalName}/reviews/${name}`;
+
+  while (1 === 1) {
+    console.log('Test');
+  }
+
   const {
     apr = 0,
     lenderRebate = 0,
